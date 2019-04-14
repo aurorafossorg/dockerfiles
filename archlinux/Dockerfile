@@ -1,5 +1,6 @@
 FROM archlinux/base
 MAINTAINER Aurora Free Open Source Software <admin@aurorafoss.org>
+MAINTAINER Luís Ferreira <luis@aurorafoss.org>
 
 RUN echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
 
