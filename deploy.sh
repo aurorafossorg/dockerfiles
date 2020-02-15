@@ -35,35 +35,60 @@
 
 set -e
 
+# Call getopt to validate the provided input.
+options=$(getopt -o p: -- "$@")
+[ $? -eq 0 ] || {
+    echo "Incorrect options provided"
+    exit 1
+}
+eval set -- "$options"
+while true; do
+    case "$1" in
+    -p)
+        _DEPOLY_DOCKER_PUSH=1
+        ;;
+    --)
+        shift
+        break
+        ;;
+    esac
+    shift
+done
+
+
 trap "git clean -fdX; exit" SIGHUP SIGINT SIGTERM
 
 for docker_file in $(find . -mindepth 2 -maxdepth 2 -type f -iname Dockerfile); do
 	docker_folder=$(dirname $docker_file)
 
-	pushd $docker_folder > /dev/null
+	pushd "$docker_folder" > /dev/null
 		docker_name=$(basename $docker_folder)
-		docker_tag="aurorafossorg/$docker_name:$(cat .version || printf latest)"
+		docker_tag="aurorafossorg/$docker_name:$(cat .version 2> /dev/null || printf latest)"
 
 		if [ -f "./bootstrap.sh" ]; then
 			./bootstrap.sh
 		fi
 
 		docker build . -t "$docker_tag"
-		docker push "$docker_tag"
+		if [ "$_DEPOLY_DOCKER_PUSH" == "1" ];then
+			docker push "$docker_tag"
+		fi
 
 		for docker_subfile in $(find . -mindepth 2 -maxdepth 2 -type f -iname Dockerfile); do
-			docker_subfolder=$(dirname $docker_subfile)
+			docker_subfolder="$(dirname $docker_subfile)"
 
-			pushd $docker_subfolder > /dev/null
+			pushd "$docker_subfolder" > /dev/null
 				docker_subname=$(basename $docker_subfolder)
-				docker_subtag="aurorafossorg/$docker_name-$docker_subname:$(cat .version || printf latest)"
+				docker_subtag="aurorafossorg/$docker_name-$docker_subname:$(cat .version 2> /dev/null || printf latest)"
 
 				if [ -f "./bootstrap.sh" ]; then
 					./bootstrap.sh
 				fi
 
-				docker build . -t $docker_subtag
-				docker push $docker_subtag
+				docker build . -t "$docker_subtag"
+				if [ "$_DEPOLY_DOCKER_PUSH" == "1" ];then
+					docker push "$docker_subtag"
+				fi
 			popd > /dev/null
 		done
 	popd > /dev/null
