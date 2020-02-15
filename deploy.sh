@@ -36,7 +36,7 @@
 set -e
 
 # Call getopt to validate the provided input.
-options=$(getopt -o p: -- "$@")
+options=$(getopt -o :p -- "$@")
 [ $? -eq 0 ] || {
     echo "Incorrect options provided"
     exit 1
