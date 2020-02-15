@@ -34,4 +34,4 @@
 
 set -e
 
-wget http://os.archlinuxarm.org/os/ArchLinuxARM-armv5-latest.tar.gz
+curl http://os.archlinuxarm.org/os/ArchLinuxARM-armv5-latest.tar.gz -O

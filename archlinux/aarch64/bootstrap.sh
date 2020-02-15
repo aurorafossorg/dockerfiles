@@ -34,4 +34,4 @@
 
 set -e
 
-wget http://de4.mirror.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
+curl http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz -O

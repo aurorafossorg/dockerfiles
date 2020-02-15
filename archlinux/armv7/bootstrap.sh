@@ -34,4 +34,4 @@
 
 set -e
 
-wget http://os.archlinuxarm.org/os/ArchLinuxARM-armv7-latest.tar.gz
+curl http://os.archlinuxarm.org/os/ArchLinuxARM-armv7-latest.tar.gz -O
