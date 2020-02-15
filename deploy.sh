@@ -58,7 +58,7 @@ done
 
 trap "git clean -fdX; exit" SIGHUP SIGINT SIGTERM
 
-for docker_file in $(find . -mindepth 2 -maxdepth 2 -type f -iname Dockerfile); do
+for docker_file in $(find . -mindepth 2 -maxdepth 2 -type f -iname Dockerfile | sort); do
 	docker_folder=$(dirname $docker_file)
 
 	pushd "$docker_folder" > /dev/null
@@ -74,7 +74,7 @@ for docker_file in $(find . -mindepth 2 -maxdepth 2 -type f -iname Dockerfile); 
 			docker push "$docker_tag"
 		fi
 
-		for docker_subfile in $(find . -mindepth 2 -maxdepth 2 -type f -iname Dockerfile); do
+		for docker_subfile in $(find . -mindepth 2 -maxdepth 2 -type f -iname Dockerfile | sort); do
 			docker_subfolder="$(dirname $docker_subfile)"
 
 			pushd "$docker_subfolder" > /dev/null
