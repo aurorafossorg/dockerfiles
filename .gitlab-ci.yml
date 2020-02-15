@@ -1,11 +1,23 @@
 image: docker:stable
 
+services:
+  - docker:dind
+
 before_script:
-  - docker login -u $DOCKER_USER -p $DOCKER_PASS
+  - apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing ldc
+  - apk add --no-cache curl git make bash gcc musl-dev
+
+build:
+  except:
+    refs:
+     - master
+  script:
+    - ./deploy.sh
 
 deploy:
   only:
     refs:
       - master
   script:
-    - ./deploy.sh
+    - echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+    - ./deploy.sh -p
