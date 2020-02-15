@@ -34,13 +34,13 @@
 
 set -e
 
-if [ ! -d adrdox ]; then
+if [ ! -d adrdox-build ]; then
 	git clone https://github.com/adamdruppe/adrdox.git adrdox-build
 fi
 
 pushd adrdox-build
-git checkout -- .
-sed "s/\tldc2 -oq -O3 -m64/\tldc2 -oq -O3 --march=x86-64/g" -i Makefile
-make ldc
-mv adrdox.main ../adrdox
+	git checkout -- .
+	sed "s/\tldc2 -oq -O3 -m64/\tldc2 -oq -O3 --march=x86-64/g" -i Makefile
+	make ldc
+	mv adrdox.main ../adrdox
 popd
