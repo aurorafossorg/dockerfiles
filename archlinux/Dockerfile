@@ -46,8 +46,7 @@ RUN pacman -Syyu base-devel git jq --noprogressbar --needed --noconfirm
 RUN /usr/sbin/groupadd --system sudo && \
     /usr/sbin/useradd -m --groups sudo user && \
     /usr/sbin/sed -i -e "s/Defaults    requiretty.*/ #Defaults    requiretty/g" /etc/sudoers && \
-    /usr/sbin/echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
-    /usr/sbin/echo "Server = https://ftp.rnl.tecnico.ulisboa.pt/pub/archlinux/$repo/os/$arch\nServer = https://glua.ua.pt/pub/archlinux/$repo/os/$arch" > /etc/pacman.d/mirrorlist
+    /usr/sbin/echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 WORKDIR /home/user/
 
