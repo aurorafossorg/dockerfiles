@@ -5,8 +5,8 @@
 # | (_| | |_| | | | (_) | | | (_| | | || (_) \__ \__ \
 #  \__,_|\__,_|_|  \___/|_|  \__,_| |_| \___/|___/___/
 #
-# Copyright (C) 2018-2019 Aurora Free Open Source Software.
-# Copyright (C) 2018-2019 Luís Ferreira <luis@aurorafoss.org>
+# Copyright (C) 2018-2020 Aurora Free Open Source Software.
+# Copyright (C) 2018-2020 Luís Ferreira <luis@aurorafoss.org>
 #
 # This file is part of the Aurora Free Open Source Software. This
 # organization promote free and open source software that you can
@@ -39,8 +39,8 @@ LABEL maintainer="Aurora Free Open Source Software <contact at aurorafoss.org>"
 RUN echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf && \
     echo -e "[ros]\nSigLevel = Optional TrustAll\nServer = https://repo.aurorafoss.org/ros-archlinux/" >> /etc/pacman.conf
 
-# Install base-devel and git
-RUN pacman -Syyu base-devel git jq --noprogressbar --needed --noconfirm
+# Install base-devel, git and lib32- libs for gcc runtime and glibc
+RUN pacman -Syyu base-devel git jq lib32-gcc-libs lib32-glibc --noprogressbar --needed --noconfirm
 
 # Add user, group sudo
 RUN /usr/sbin/groupadd --system sudo && \
