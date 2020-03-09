@@ -5,8 +5,8 @@
 # | (_| | |_| | | | (_) | | | (_| | | || (_) \__ \__ \
 #  \__,_|\__,_|_|  \___/|_|  \__,_| |_| \___/|___/___/
 #
-# Copyright (C) 2018-2019 Aurora Free Open Source Software.
-# Copyright (C) 2018-2019 Luís Ferreira <luis@aurorafoss.org>
+# Copyright (C) 2018-2020 Aurora Free Open Source Software.
+# Copyright (C) 2018-2020 Luís Ferreira <luis@aurorafoss.org>
 #
 # This file is part of the Aurora Free Open Source Software. This
 # organization promote free and open source software that you can
@@ -32,15 +32,36 @@
 # directly send an email to: contact (at) aurorafoss.org .
 
 
-FROM archlinux
+FROM alpine:edge
+
+RUN apk add --no-cache ldc ldc-runtime git make gcc build-base
+
+WORKDIR /tmp
+RUN git clone https://github.com/adamdruppe/adrdox.git adrdox-build && \
+	cd adrdox-build && \
+		git checkout -- . && \
+		sed "s/\tldc2 -oq -O3 -m64/\tldc2 -oq -O3 --march=x86-64/g" -i Makefile && \
+		make ldc && \
+		mv adrdox.main ../adrdox
+
+FROM alpine:edge AS alpine
 LABEL maintainer="Aurora Free Open Source Software <contact at aurorafoss.org>"
 
-RUN pacman -Sy liblphobos --noprogressbar --noconfirm
+COPY --from=0 /tmp/adrdox /usr/bin/
 
-# Remove cache and update trusted certs
-RUN rm -rf /var/cache/pacman/pkg/* && \
-	rm -rf /var/lib/pacman/sync/* && \
-	rm -rf /tmp && \
-    trust extract-compat
+RUN apk add --no-cache ldc-runtime && \
+	apk add --no-cache --virtual=.build-dependencies ca-certificates && \
+	apk del .build-dependencies \
+	rm /tmp/* \
+	rm -rf /var/cache/apk/*
 
-ADD adrdox /usr/bin/
+CMD ["/usr/bin/adrdox"]
+
+FROM scratch AS slim
+LABEL maintainer="Aurora Free Open Source Software <contact at aurorafoss.org>"
+
+COPY --from=alpine /usr/bin/adrdox /usr/bin/
+COPY --from=alpine /lib/ld-musl-x86_64.so.1 /lib/
+COPY --from=alpine /usr/lib/libgcc_s.so.1 /usr/lib/
+
+CMD ["/usr/bin/adrdox"]

@@ -5,8 +5,8 @@
 # | (_| | |_| | | | (_) | | | (_| | | || (_) \__ \__ \
 #  \__,_|\__,_|_|  \___/|_|  \__,_| |_| \___/|___/___/
 #
-# Copyright (C) 2018-2019 Aurora Free Open Source Software.
-# Copyright (C) 2018-2019 Luís Ferreira <luis@aurorafoss.org>
+# Copyright (C) 2018-2020 Aurora Free Open Source Software.
+# Copyright (C) 2018-2020 Luís Ferreira <luis@aurorafoss.org>
 #
 # This file is part of the Aurora Free Open Source Software. This
 # organization promote free and open source software that you can
@@ -35,8 +35,8 @@
 FROM aurorafossorg/archlinux
 LABEL maintainer="Aurora Free Open Source Software <contact at aurorafoss.org>"
 
-# Install dlang group
-RUN pacman -Sy dlang --noprogressbar --noconfirm
+# Install dlang group and other necessary packages
+RUN pacman -Syu dlang gcc-d --noprogressbar --noconfirm
 
 # Remove cache and update trusted certs
 RUN rm -rf /var/cache/pacman/pkg/* && \

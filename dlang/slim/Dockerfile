@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 #                                     __
 #                                    / _|
 #   __ _ _   _ _ __ ___  _ __ __ _  | |_ ___  ___ ___
@@ -6,8 +5,8 @@
 # | (_| | |_| | | | (_) | | | (_| | | || (_) \__ \__ \
 #  \__,_|\__,_|_|  \___/|_|  \__,_| |_| \___/|___/___/
 #
-# Copyright (C) 2018-2019 Aurora Free Open Source Software.
-# Copyright (C) 2018-2019 Luís Ferreira <luis@aurorafoss.org>
+# Copyright (C) 2018-2020 Aurora Free Open Source Software.
+# Copyright (C) 2018-2020 Luís Ferreira <luis@aurorafoss.org>
 #
 # This file is part of the Aurora Free Open Source Software. This
 # organization promote free and open source software that you can
@@ -32,15 +31,30 @@
 # For more info about intellectual property visit: aurorafoss.org or
 # directly send an email to: contact (at) aurorafoss.org .
 
-set -e
 
-if [ ! -d adrdox-build ]; then
-	git clone https://github.com/adamdruppe/adrdox.git adrdox-build
-fi
+FROM alpine:edge
+LABEL maintainer="Aurora Free Open Source Software <contact at aurorafoss.org>"
 
-pushd adrdox-build
-	git checkout -- .
-	sed "s/\tldc2 -oq -O3 -m64/\tldc2 -oq -O3 --march=x86-64/g" -i Makefile
-	make ldc
-	mv adrdox.main ../adrdox
-popd
+
+# Install dlang and base related packages for building
+RUN set -eux; \
+	apk add --no-cache build-base gcc g++ libstdc++ \
+	ldc ldc-runtime gcc-gdc dub \
+	git make wget curl bash binutils-gold \
+	openssl-dev libevent-dev gnupg xz
+
+# Install glibc
+RUN export PKG_ALPINE_GLIBC_VERSION=2.30-r0; \
+	wget -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
+	wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${PKG_ALPINE_GLIBC_VERSION}/glibc-${PKG_ALPINE_GLIBC_VERSION}.apk && \
+	apk add glibc-*.apk && \
+	rm glibc-*.apk /etc/apk/keys/sgerrand.rsa.pub
+
+RUN ln -s /usr/bin/ld.gold /usr/local/bin/ld
+
+RUN apk add --no-cache --repository=http://nl.alpinelinux.org/alpine/edge/testing \
+	dmd
+
+# Cleanup
+RUN rm -rf /tmp/* && \
+	rm -rf /var/cache/apk/*
