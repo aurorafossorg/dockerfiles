@@ -1,0 +1,25 @@
+version: "3.7"
+services:
+  archlinux:
+    image: aurorafossorg/archlinux:latest
+    build: ./archlinux
+
+  dlang:
+    image: aurorafossorg/dlang:latest
+    build: ./dlang
+    depends_on:
+      - archlinux
+  dlang-slim:
+    image: aurorafossorg/dlang:slim
+    build: ./dlang/slim
+
+  dlang-adrdox-alpine:
+    image: aurorafossorg/dlang-adrdox:latest
+    build:
+      context: ./dlang/adrdox
+      target: alpine
+  dlang-adrdox-slim:
+    image: aurorafossorg/dlang-adrdox:slim
+    build:
+      context: ./dlang/adrdox
+      target: slim
