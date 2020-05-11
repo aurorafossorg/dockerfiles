@@ -40,5 +40,5 @@ RUN pacman -Syu dlang gcc-d --noprogressbar --noconfirm
 
 # Remove cache and update trusted certs
 RUN rm -rf /var/cache/pacman/pkg/* && \
-    rm -rf /tmp && \
+    rm -rf /tmp/* && \
     trust extract-compat

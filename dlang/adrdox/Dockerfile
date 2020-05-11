@@ -52,7 +52,7 @@ COPY --from=0 /tmp/adrdox /usr/bin/
 RUN apk add --no-cache ldc-runtime && \
 	apk add --no-cache --virtual=.build-dependencies ca-certificates && \
 	apk del .build-dependencies \
-	rm /tmp/* \
+	rm -rf /tmp/* \
 	rm -rf /var/cache/apk/*
 
 CMD ["/usr/bin/adrdox"]

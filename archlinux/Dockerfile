@@ -74,7 +74,7 @@ RUN pacman -Rs jq --noprogressbar --noconfirm && \
 # Remove cache and update trusted certs
 RUN rm -rf /var/cache/pacman/pkg/* && \
     rm -rf /var/lib/pacman/sync/* && \
-    rm -rf /tmp && \
+    rm -rf /tmp/* && \
     trust extract-compat
 
 WORKDIR /
